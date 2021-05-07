@@ -1,0 +1,50 @@
+DESCRIZIONE PROGETTO
+L’esercizio consiste nell’analizzare dei dati elettroencefalografici (EEG) che descrivono l’at-
+tività cerebrale di un soggetto volontario durante l’esecuzione di un compito (apertura e
+chiusura degli occhi) e nell’identificare le regioni cerebrali coinvolte in tal compito.
+Data set: testeeglaboratorio.set, testeeglaboratorio.fdt (Moodle)
+Descrizione dei dati: i dati EEG sono stati acquisiti in un soggetto sano usando il sistema
+EEG EbNeuro S.P.A. (Italy) con cuffia a 21 canali (19+REF+GND). Il dato contiene già
+le rispettive locazioni dei canali EEG (Standard-10-20-Cap19.locs) e gli eventi di
+chiusura degli occhi ”2” eyes closed (EC) e di apertura ”4” eyes open (EO). La frequenza di
+campionamento è di 128 Hz. Il paradigma sperimentale ha un design a blocchi cosı̀ definito:
+un periodo ad occhi chiusi di 20 s alternato ad un periodo di 20 s ad occhi aperti. In totale
+sono stati acquisiti circa 4 min e 25 s di tracciato alternando 6 blocchi ad occhi chiusi e 6
+blocchi ad occhi aperti (l’EEG complessivo dura oltre i 13 minuti).
+
+CONSEGNA. Scrivere il seguente script Matlab:
+(si possono utilizzare le funzioni EEGLAB ove possibile)
+
+1. Caricare in Matlab il dato e visualizzarlo. Commentare le modifiche dell’attività cerebrale
+nelle due diverse condizioni. Sono presenti degli artefatti?
+
+Si notano artefatti di eyes blink
+
+2. Rimuovere la baseline da tutti i canali senza utilizzare la funzione di eeglab. Controllare
+il risultato.
+
+3. Filtrare il dato nel range in frequenza 1-25 Hz applicando separatamente un highpass
+filter (EEGLAB) e un lowpass filter (utilizzare un filtro FIR con filtraggio Back-Forward
+implementato a Lezione).
+
+4. Re-referenziare il dato usando la referenza media. Controllare il risultato.
+
+5. Interpolare eventuali bad channel. Controllare il risultato.
+
+6. Filtrare il dato da eventuali artefatti presenti nel tracciato tramite l’analisi delle com-
+ponenti indipendenti (ICA) come metodo di denoising (usare la plug-in di EEGlab fastica).
+Visualizzare le componenti ed identificare quelle contenenti artefatti (es. artefatto oculare,
+artefatto da movimento, artefatto da battito cardiaco ecc.). Eliminare le componenti identi-
+ficate come rumore, visualizzare l’EEG dopo il denoising e controllare il risultato.
+
+7. Estrarre tutti i tipi di epoche dopo gli eventi. Estrarre le epoche sincrone all’evento ”2” e
+”4” da 0 a 2 s dopo l’evento. Selezionare le epoche di tipo ”2” EC e visualizzarle. Selezionare
+le epoche di tipo ”4” EO e visualizzarle (nota bene: per selezionare le epoche di tipo ”4” è
+necessario utilizzare il dataset che contiene tutte le epoche).
+
+8. Calcolare la densità spettrale di potenza media separatamente per le epoche di tipo ”2”
+e le epoche ”4”, rispettivamente. Consiglio: utilizzare una colorbar comune per entrambe le
+mappe topografiche. Commentare il risultato ottenuto.
+
+9. Discutere complessivamente i risultati ottenuti (ci sono di↵erenze tra le due condizioni, in
+quale banda in frequenza, quali elettrodi sono coinvolti ecc.).
