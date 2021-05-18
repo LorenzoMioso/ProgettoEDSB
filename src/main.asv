@@ -3,14 +3,14 @@ close all;
 clc;
 %% 1 Load the EEG file and the channel location
 
-fs = 128;
+FS = 128;
 [ALLEEG EGG CURRENTSET ALLCOM]=eeglab;
 EEG = pop_loadset('resources/testeeglaboratorio.set');
 [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG);
 
 eeglab redraw;
 
-eegplot(EEG.data, 'srate', fs, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 30, 'spacing', 100, 'color', {'k'},'title','EEG PLOT');
+eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 30, 'spacing', 100, 'color', {'k'},'title','EEG PLOT');
 
 %% Baseline removal
 
@@ -22,7 +22,7 @@ end
 
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EEG_BAS');
 
-eegplot(EEG.data, 'srate', fs, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 30, 'spacing', 100, 'color', {'k'},'title','EEG_BAS PLOT ');
+eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 30, 'spacing', 100, 'color', {'k'},'title','EEG_BAS PLOT ');
 
 eeglab redraw;
 
@@ -39,13 +39,56 @@ eeglab redraw;
 
 %% Filtering the data [1-25 Hz]
 
-EEG = pop_eegfilt( EEG, 1, 0, [], [0], 0, 1, 'fir1', 0); % highpass filter
+EEG = pop_eegfilt( EEG, 1, 0, [], 0, 0, 1, 'fir1', 0); % highpass filter
+
+%% lowpass filter 
+
+lw = 2;
+% Obiettivo: costruire un filtro con ampiezza unitaria tra le frequenze
+% (normalizzate) 0 e Wp ed ampiezza nulla tra le frequenze Ws e 1.
+
+% SPECIFICHE: costanti del progetto
+fp = 24.9; % banda passante [0,fp] 0 - 1.6kHz 
+fs = 25.1; % banda oscura [fs,Fs/2] 2.4 - 4kHz       
+delta_p = 0.99; 
+delta_s = 0.01;
+RpdB = -20*log10(delta_p); % ripple in banda passante (dB) 
+RsdB = -20*log10(delta_s); % ripple in banda oscura (dB) 
+Wp = fp/(FS/2); % freq sup banda passante normalizzata
+Ws = fs/(FS/2); % freq inf banda passante normalizzata
+
+f = [0 Wp Ws 1];
+m = [1 1 0 0];
+n = 1000;
+
+% progetto il filtro FIR
+[b,err] = firpm(n,f,m);
+
+% calcolo la risposta in frequenza
+[H,F] = freqz(b,1,FS/2,FS);
+
+H_FB=H.*conj(H);
+
+figure;
+subplot(211),
+    plot(F,abs(H),F,abs(H_FB),'r')
+    ylabel('modulo'),
+    legend('filter','filtfilt');
+    axis([0 FS/2-1 -0.05 1.05]);
+subplot(212),
+    plot(F,angle(H),F,angle(H_FB),'r'),
+    xlabel('frequenza Hz)'),
+    ylabel('fase (radianti)'),
+    legend('filter','filtfilt');
+    axis([0 FS/2-1 -pi pi]);
+    axis();
+
+%%
 
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EEG_BAS_FIL');
 eegplot(EEG.data, 'srate', fs, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 30, 'spacing', 100, 'color', {'k'},'title','EEG_BAS_FIL PLOT ');
 
 eeglab redraw;
-
 
 %% Re-reference the data (use average reference)
 
