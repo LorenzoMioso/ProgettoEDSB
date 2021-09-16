@@ -126,7 +126,7 @@ pop_topoplot(EEG, 0, [1: size(EEG.icawinv,2)], 'EEG_FIL_BAS_AVE_INT_ICA', [4 5],
 
 %% ICA denoising
 
-EEG = pop_subcomp( EEG, 4, 0); % removing third component
+EEG = pop_subcomp( EEG, 3, 0); % removing third component
 pop_eegplot(EEG,0,0,0);
 
 eeglab redraw;
