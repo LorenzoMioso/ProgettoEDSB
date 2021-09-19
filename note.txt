@@ -48,3 +48,7 @@ mappe topografiche. Commentare il risultato ottenuto.
 
 9. Discutere complessivamente i risultati ottenuti (ci sono di↵erenze tra le due condizioni, in
 quale banda in frequenza, quali elettrodi sono coinvolti ecc.).
+
+
+*****
+Rireferenziaggio medio spalma la banda alpha su tutti i canali

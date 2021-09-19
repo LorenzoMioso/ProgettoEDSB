@@ -1,11 +1,17 @@
 clear all;
 close all;
 clc;
-%% 1 Load the EEG file and the channel location
+
+%% Set Study dependent variables
 
 FS = 128;
+EPOCH_DURATION = 18;
+
+%% Load the EEG file and the channel location
+
 [ALLEEG EGG CURRENTSET ALLCOM]=eeglab;
 EEG = pop_loadset('resources/testeeglaboratorio.set');
+
 [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG);
 
 eeglab redraw;
@@ -135,29 +141,39 @@ eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, '
 
 %% Extracting all type epochs after the events
 
-EEG = pop_epoch( EEG, {'2' '4'}, [0 2], 'newname' ,'EOEC_epochs', 'epochinfo', 'yes' );
+EEG = eeg_retrieve( ALLEEG, 6 );
+EEG = pop_epoch( EEG, {'2' '4'}, [0 EPOCH_DURATION], 'newname' ,'EOEC_epochs', 'epochinfo', 'yes' );
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EOEC_epochs');
 
 eeglab redraw;
 
-eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 15, 'spacing', 50, 'color', {'k'});
+eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 15, 'spacing', 50, 'color', {'k'},'title','EEG_BAS_FIL_AVE_INT_ICA_EPOCHS PLOT');
 
 %% Extract epochs Type 2 EC (eyes closed)
 
-EEG = pop_selectevent(EEG,'type',2,'deleteevents','on','deleteepochs','on');
+EEG = eeg_retrieve( ALLEEG, 7 );
+EEG = pop_selectevent(EEG,'type',2);
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EC_epochsT2');
 
 eeglab redraw;
 
-eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 5, 'spacing', 50, 'color', {'k'});
+eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 8, 'spacing', 100, 'color', {'k'},'title','EEG_BAS_FIL_AVE_INT_ICA_EPOCH_T2 PLOT');
 
 %% Extract epochs Type 4 EO (eyes open)
 EEG = eeg_retrieve( ALLEEG, 7 );
 
-EEG = pop_selectevent(EEG,'type',4,'deleteevents','on','deleteepochs','on');
+EEG = pop_selectevent(EEG,'type',4);
+
+% %FIX EPOCH
+% EEG.epoch.event(5) = struct(5);
+% EEG.epoch.eventtype(5) = struct(2);
+% EEG.epoch.eventletency(5) = struct(0);
+% EEG.epoch.eventreturnevent(5) = struct(135);
+
+
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EO_epochsT4');
 
-eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 5, 'spacing', 50, 'color', {'k'});
+eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, 'winlength', 8, 'spacing', 100, 'color', {'k'},'title','EEG_BAS_FIL_AVE_INT_ICA_EPOCH_T4 PLOT');
 
 eeglab redraw;
 %% Calculate power spectra density
@@ -165,9 +181,9 @@ eeglab redraw;
 EEG = eeg_retrieve( ALLEEG, 8 );
 figure;
 title('Type 2 EC (eyes closed)');
-pop_spectopo( EEG, 1, [0 1996], 'EEG','percent',100,'freq',[6 11 22],'freqrange', [2 25], 'electrodes', 'on', 'maplimits', [-8 8]);
+pop_spectopo( EEG, 1, [0 EPOCH_DURATION * 1000], 'EEG','percent',100,'freq',[6 11 22],'freqrange', [2 25], 'electrodes', 'on', 'maplimits', [-8 8]);
 
 EEG = eeg_retrieve( ALLEEG, 9 );
 figure;
 title('Type 4 EO (eyes open)');
-pop_spectopo( EEG, 1, [0 1996], 'EEG','percent',100,'freq',[6 11 22],'freqrange', [2 25], 'electrodes', 'on', 'maplimits', [-8 8]);
+pop_spectopo( EEG, 1, [0 EPOCH_DURATION * 1000], 'EEG','percent',100,'freq',[6 11 22],'freqrange', [2 25], 'electrodes', 'on', 'maplimits', [-8 8]);
