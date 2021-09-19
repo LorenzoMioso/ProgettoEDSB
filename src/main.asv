@@ -1,16 +1,20 @@
 clear all;
-%close all;
+close all;
 clc;
-
-%% Set Study dependent variables
-
-FS = 128;
-EPOCH_DURATION = 19;
 
 %% Load the EEG file and the channel location
 
 [ALLEEG EGG CURRENTSET ALLCOM]=eeglab;
-EEG = pop_loadset('resources/testeeglaboratorio.set');
+% Tracciato consegna
+% FS = 128;
+% EPOCH_DURATION = 18;
+% EEG = pop_loadset('resources/testeeglaboratorio.set');
+
+%tracciato lab
+FS = 250;
+EPOCH_DURATION = 2;
+EEG = pop_biosig('data_sub1_EOEC.edf', 'channels' , [1:10 13:18 20:22]);
+EEG = pop_chanedit(EEG,'load', {'elettrodes_10_20_SEI.sfp', 'filetype', 'sfp'});
 
 [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG);
 
@@ -164,8 +168,11 @@ EEG = eeg_retrieve( ALLEEG, 7 );
 
 EEG = pop_selectevent(EEG,'type',4);
 
-%FIX EPOCH
-EEG.epoch.event(5) = 5;
+% %FIX EPOCH
+% EEG.epoch.event(5) = struct(5);
+% EEG.epoch.eventtype(5) = struct(2);
+% EEG.epoch.eventletency(5) = struct(0);
+% EEG.epoch.eventreturnevent(5) = struct(135);
 
 
 [ALLEEG EEG CURRENTSET] = pop_newset( ALLEEG, EEG, CURRENTSET,'setname','EO_epochsT4');
