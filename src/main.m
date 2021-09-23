@@ -6,15 +6,15 @@ clc;
 
 [ALLEEG EGG CURRENTSET ALLCOM]=eeglab;
 % Tracciato consegna
-% FS = 128;
-% EPOCH_DURATION = 18;
-% EEG = pop_loadset('resources/testeeglaboratorio.set');
+FS = 128;
+EPOCH_DURATION = 18;
+EEG = pop_loadset('resources/testeeglaboratorio.set');
 
 %tracciato lab
-FS = 250;
-EPOCH_DURATION = 2;
-EEG = pop_biosig('data_sub1_EOEC.edf', 'channels' , [1:10 13:18 20:22]);
-EEG = pop_chanedit(EEG,'load', {'elettrodes_10_20_SEI.sfp', 'filetype', 'sfp'});
+% FS = 250;
+% EPOCH_DURATION = 2;
+% EEG = pop_biosig('data_sub1_EOEC.edf', 'channels' , [1:10 13:18 20:22]);
+% EEG = pop_chanedit(EEG,'load', {'elettrodes_10_20_SEI.sfp', 'filetype', 'sfp'});
 
 [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG);
 
@@ -73,6 +73,8 @@ Ws = fs/(FS/2); % freq inf banda passante normalizzata
 f = [0 Wp Ws 1];
 m = [1 1 0 0];
 n = 1000;
+
+[n,fo,mo,w] = firpmord( [fp fs], [1 0], [0.01 0.1], FS );
 
 % progetto il filtro FIR
 [b,err] = firpm(n,f,m);
