@@ -1,5 +1,5 @@
 clear all;
-% close all;
+close all;
 clc;
 
 %% Load the EEG file and the channel location
@@ -56,7 +56,6 @@ eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, '
 
 % lowpass filter
 
-lw = 2;
 % Obiettivo: costruire un filtro con ampiezza unitaria tra le frequenze
 % (normalizzate) 0 e Wp ed ampiezza nulla tra le frequenze Ws e 1.
 
@@ -73,8 +72,6 @@ Ws = fs/(FS/2); % freq inf banda passante normalizzata
 f = [0 Wp Ws 1];
 m = [1 1 0 0];
 n = 1000;
-
-[n,fo,mo,w] = firpmord( [fp fs], [1 0], [0.01 0.1], FS );
 
 % progetto il filtro FIR
 [b,err] = firpm(n,f,m);

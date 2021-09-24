@@ -1,20 +1,20 @@
 clear all;
-close all;
+% close all;
 clc;
 
 %% Load the EEG file and the channel location
 
 [ALLEEG EGG CURRENTSET ALLCOM]=eeglab;
 % Tracciato consegna
-% FS = 128;
-% EPOCH_DURATION = 18;
-% EEG = pop_loadset('resources/testeeglaboratorio.set');
+FS = 128;
+EPOCH_DURATION = 18;
+EEG = pop_loadset('resources/testeeglaboratorio.set');
 
 %tracciato lab
-FS = 250;
-EPOCH_DURATION = 2;
-EEG = pop_biosig('data_sub1_EOEC.edf', 'channels' , [1:10 13:18 20:22]);
-EEG = pop_chanedit(EEG,'load', {'elettrodes_10_20_SEI.sfp', 'filetype', 'sfp'});
+% FS = 250;
+% EPOCH_DURATION = 2;
+% EEG = pop_biosig('data_sub1_EOEC.edf', 'channels' , [1:10 13:18 20:22]);
+% EEG = pop_chanedit(EEG,'load', {'elettrodes_10_20_SEI.sfp', 'filetype', 'sfp'});
 
 [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG);
 
@@ -56,13 +56,12 @@ eegplot(EEG.data, 'srate', FS, 'eloc_file', EEG.chanlocs, 'events', EEG.event, '
 
 % lowpass filter
 
-lw = 2;
 % Obiettivo: costruire un filtro con ampiezza unitaria tra le frequenze
 % (normalizzate) 0 e Wp ed ampiezza nulla tra le frequenze Ws e 1.
 
 % SPECIFICHE: costanti del progetto
-fp = 24.9; % banda passante [0,fp] 0 - 1.6kHz
-fs = 25.1; % banda oscura [fs,Fs/2] 2.4 - 4kHz
+fp = 24.8; % banda passante 
+fs = 25.2; % banda oscura 
 delta_p = 0.99;
 delta_s = 0.01;
 RpdB = -20*log10(delta_p); % ripple in banda passante (dB)
@@ -72,7 +71,9 @@ Ws = fs/(FS/2); % freq inf banda passante normalizzata
 
 f = [0 Wp Ws 1];
 m = [1 1 0 0];
-n = 1000;
+n = 1038;
+
+[n,f,m,w] = firpmord( [fp fs], [1000 1000], [1 1], FS );
 
 % progetto il filtro FIR
 [b,err] = firpm(n,f,m);
